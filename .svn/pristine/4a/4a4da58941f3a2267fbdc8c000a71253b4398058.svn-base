@@ -1,0 +1,316 @@
+<template>
+  <basic-container>
+    <avue-crud :option="option"
+               :table-loading="loading"
+               :data="data"
+               :page="page"
+               :permission="permissionList"
+               :before-open="beforeOpen"
+               v-model="form"
+               ref="crud"
+               @row-update="rowUpdate"
+               @row-save="rowSave"
+               @row-del="rowDel"
+               @search-change="searchChange"
+               @search-reset="searchReset"
+               @selection-change="selectionChange"
+               @current-change="currentChange"
+               @size-change="sizeChange"
+               @on-load="onLoad">
+      <template slot="menuLeft">
+        <el-button type="danger"
+                   size="small"
+                   icon="el-icon-delete"
+                   plain
+                   v-if="permission.record_delete"
+                   @click="handleDelete">删 除
+        </el-button>
+      </template>
+      <template slot-scope="scope" slot="menu">
+        <el-dropdown @command="go">
+          <el-button  class="el-dropdown-link" size="small">
+            详情<i class="el-icon-arrow-down el-icon--right"></i>
+          </el-button >
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item @click.native="go(scope.row,1)">签到</el-dropdown-item>
+            <el-dropdown-item @click.native="go(scope.row,2)">学生上传</el-dropdown-item>
+            <el-dropdown-item @click.native="go(scope.row,3)">课堂录屏</el-dropdown-item>
+            <el-dropdown-item @click.native="go(scope.row,4)">教师下发</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </template>
+
+    </avue-crud>
+  </basic-container>
+</template>
+
+<script>
+  import {getList, getDetail, add, update, remove} from "@/api/class/record/record";
+  import {mapGetters} from "vuex";
+
+  export default {
+    data() {
+      return {
+        form: {},
+        query: {},
+        loading: true,
+        page: {
+          pageSize: 10,
+          currentPage: 1,
+          total: 0
+        },
+        selectionList: [],
+        option: {
+          tip: false,
+          border: true,
+          index: false,
+          viewBtn: true,
+          menuType:'menu',
+          editBtn: false,
+          selection: true,
+          addBtn: false,
+          column: [
+            {
+              label: "编号",
+              prop: "id",
+              rules: [{
+                required: true,
+                message: "请输入编号",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "教师名称",
+              prop: "teacherName",
+              search:true,
+              rules: [{
+                required: true,
+                message: "请输入教师名称",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "班级名称",
+              prop: "className",
+              search:true,
+              rules: [{
+                required: true,
+                message: "请输入班级名称",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "科目名称",
+              prop: "subjectName",
+              search:true,
+              rules: [{
+                required: true,
+                message: "请输入科目名称",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "年级名称",
+              prop: "gradeName",
+              search:true,
+              rules: [{
+                required: true,
+                message: "请输入年级名称",
+                trigger: "blur"
+              }]
+            },
+           
+            {
+              label: "学校名称",
+              prop: "officeName",
+              search:true,
+              rules: [{
+                required: true,
+                message: "请输入学校名称",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "开始时间",
+              prop: "startTime",
+              search:true,
+              type:'datetime',
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
+              rules: [{
+                required: true,
+                message: "请输入开始时间",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "结束时间",
+              prop: "endTime",
+              type:'datetime',
+              search:true,
+              valueFormat: "yyyy-MM-dd HH:mm:ss",
+              rules: [{
+                required: true,
+                message: "请输入结束时间",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "创建时间",
+              prop: "createTime",
+              rules: [{
+                required: true,
+                message: "请输入创建时间",
+                trigger: "blur"
+              }]
+            },
+          ]
+        },
+        data: []
+      };
+    },
+    computed: {
+      ...mapGetters(["permission"]),
+      permissionList() {
+        return {
+          addBtn: this.vaildData(this.permission.record_add, false),
+          viewBtn: this.vaildData(this.permission.record_view, false),
+          delBtn: this.vaildData(this.permission.record_delete, false),
+          editBtn: this.vaildData(this.permission.record_edit, false)
+        };
+      },
+      ids() {
+        let ids = [];
+        this.selectionList.forEach(ele => {
+          ids.push(ele.id);
+        });
+        return ids.join(",");
+      }
+    },
+    methods: {
+      rowSave(row, loading, done) {
+        add(row).then(() => {
+          loading();
+          this.onLoad(this.page);
+          this.$message({
+            type: "success",
+            message: "操作成功!"
+          });
+        }, error => {
+          done();
+          console.log(error);
+        });
+      },
+      rowUpdate(row, index, loading, done) {
+        update(row).then(() => {
+          loading();
+          this.onLoad(this.page);
+          this.$message({
+            type: "success",
+            message: "操作成功!"
+          });
+        }, error => {
+          done();
+          console.log(error);
+        });
+      },
+      rowDel(row) {
+        this.$confirm("确定将选择数据删除?", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            return remove(row.id);
+          })
+          .then(() => {
+            this.onLoad(this.page);
+            this.$message({
+              type: "success",
+              message: "操作成功!"
+            });
+          });
+      },
+      handleDelete() {
+        if (this.selectionList.length === 0) {
+          this.$message.warning("请选择至少一条数据");
+          return;
+        }
+        this.$confirm("确定将选择数据删除?", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            return remove(this.ids);
+          })
+          .then(() => {
+            this.onLoad(this.page);
+            this.$message({
+              type: "success",
+              message: "操作成功!"
+            });
+            this.$refs.crud.toggleSelection();
+          });
+      },
+      beforeOpen(done, type) {
+        if (["edit", "view"].includes(type)) {
+          getDetail(this.form.id).then(res => {
+            this.form = res.data.data;
+          });
+        }
+        done();
+      },
+      searchReset() {
+        this.query = {};
+        this.onLoad(this.page);
+      },
+      searchChange(params) {
+        this.query = params;
+        this.onLoad(this.page, params);
+      },
+      selectionChange(list) {
+        this.selectionList = list;
+      },
+      selectionClear() {
+        this.selectionList = [];
+        this.$refs.crud.toggleSelection();
+      },
+      currentChange(currentPage){
+        this.page.currentPage = currentPage;
+      },
+      sizeChange(pageSize){
+        this.page.pageSize = pageSize;
+      },
+      onLoad(page, params = {}) {
+        this.loading = true;
+        getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
+          const data = res.data.data;
+          this.page.total = data.total;
+          this.data = data.records;
+          this.loading = false;
+          this.selectionClear();
+        });
+      },
+      go(row,type){
+        switch(type) {
+          case 1:
+              this.$router.push({ path: '/class/sign/recordsignin', query: { id: row.id }})
+              break;
+          case 2:
+              this.$router.push({ path: '/class/student/stusend', query: { id: row.id }})
+              break;
+          case 3:
+              this.$router.push({ path: '/class/student/stusend', query: { id: row.id }})
+              break;
+          case 4:
+              this.$router.push({ path: '/class/student/stusend', query: { id: row.id }})
+              break;
+        } 
+        
+      }
+    }
+  };
+</script>
+
+<style>
+</style>
