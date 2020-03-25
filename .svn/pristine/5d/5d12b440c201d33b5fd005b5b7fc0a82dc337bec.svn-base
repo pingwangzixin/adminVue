@@ -141,7 +141,7 @@
     watch: {
       classRoomId: {
         deep: true,
-        handler(newVal){
+        handler(newVal, oldVal){
           this.query.classRoomId = newVal;
           this.onLoad(this.page);
         }

@@ -34,7 +34,7 @@ module.exports = {
         }
       },
       '/api': {
-        target: 'http://localhost',
+        target: 'http://111.207.13.88:9133',
         ws: true,
         pathRewrite: {
           '^/api': '/'
