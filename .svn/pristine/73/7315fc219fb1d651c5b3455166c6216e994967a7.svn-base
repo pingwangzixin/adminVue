@@ -301,44 +301,25 @@
             boundaryGap: false,
             data: res.data.data.weekDays
           },
-          tooltip: {
-             trigger: 'axis'
-          },
           legend: {
-            data: ['IP', 'PV']
+            data: ['ip', 'pv']
           },
           yAxis: {
             type: 'value'
           },
           series: [{
-              name: 'IP',
+              name: 'ip',
               stack: '总量',
               data: res.data.data.ipData,
               type:'line',
               smooth: true,
-              itemStyle: {
-              							normal: {
-              								color: '#f56c6c', //改变折线点的颜色
-              								lineStyle: {
-              									color: '#f56c6c' //改变折线颜色
-              								}
-              							}
-              						}
             },
             {
-              name: 'PV',
+              name: 'pv',
               stack: '总量',
               data: res.data.data.visitsData,
               type:'line',
               smooth: true,
-              itemStyle: {
-              							normal: {
-              								color: '#15A0FF', //改变折线点的颜色
-              								lineStyle: {
-              									color: '#15A0FF' //改变折线颜色
-              								}
-              							}
-              						}
             }
           ]
         };
