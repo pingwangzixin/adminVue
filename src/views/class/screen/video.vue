@@ -22,37 +22,23 @@
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.record_delete"
+                   v-if="permission.video_delete"
                    @click="handleDelete">删 除
         </el-button>
       </template>
-      <template slot-scope="scope" slot="menu">
-        <el-dropdown @command="go">
-          <el-button  class="el-dropdown-link" size="small">
-            详情<i class="el-icon-arrow-down el-icon--right"></i>
-          </el-button >
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item @click.native="go(scope.row,1)">签到</el-dropdown-item>
-            <el-dropdown-item @click.native="go(scope.row,2)">学生上传</el-dropdown-item>
-            <el-dropdown-item @click.native="go(scope.row,3)">课堂录屏</el-dropdown-item>
-            <el-dropdown-item @click.native="go(scope.row,4)">教师下发</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </template>
-
     </avue-crud>
   </basic-container>
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/class/record/record";
+  import {getList, getDetail, add, update, remove} from "@/api/screen/video";
   import {mapGetters} from "vuex";
 
   export default {
     data() {
       return {
         form: {},
-        query: {},
+        query: {recordId:this.$route.query.id},
         loading: true,
         page: {
           pageSize: 10,
@@ -63,103 +49,64 @@
         option: {
           tip: false,
           border: true,
-          index: false,
+          index: true,
           viewBtn: true,
-          menuType:'menu',
-          editBtn: false,
           selection: true,
-          addBtn: false,
           column: [
             {
-              label: "编号",
-              prop: "id",
+              label: "课堂记录id",
+              prop: "recordId",
+              hide: true,
+              value: this.$route.query.id,
               rules: [{
                 required: true,
-                message: "请输入编号",
+                message: "请输入课堂记录id",
                 trigger: "blur"
               }]
             },
             {
-              label: "教师名称",
-              prop: "teacherName",
-              search:true,
+              label: "录屏名称",
+              prop: "videoName",
               rules: [{
                 required: true,
-                message: "请输入教师名称",
+                message: "请输入录屏名称",
                 trigger: "blur"
               }]
             },
             {
-              label: "班级名称",
-              prop: "className",
-              search:true,
+              label: "文件路径",
+              prop: "filepath",
               rules: [{
                 required: true,
-                message: "请输入班级名称",
+                message: "请输入文件路径",
                 trigger: "blur"
               }]
             },
             {
-              label: "科目名称",
-              prop: "subjectName",
-              search:true,
+              label: "播放地址",
+              prop: "playPath",
               rules: [{
                 required: true,
-                message: "请输入科目名称",
+                message: "请输入文件路径",
                 trigger: "blur"
               }]
             },
             {
-              label: "年级名称",
-              prop: "gradeName",
-              search:true,
+              label: "转码状态",
+              prop: "status",
+              dicData:[{
+                label:'正在转码',
+                value: "0"
+              },{
+                label:'转码成功',
+                value:"1"
+              },{
+                label:'转码失败',
+                value:"2"
+              }],
               rules: [{
                 required: true,
-                message: "请输入年级名称",
-                trigger: "blur"
-              }]
-            },
-           
-            {
-              label: "学校名称",
-              prop: "officeName",
-              search:true,
-              rules: [{
-                required: true,
-                message: "请输入学校名称",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "开始时间",
-              prop: "startTime",
-              search:true,
-              type:'datetime',
-              valueFormat: "yyyy-MM-dd HH:mm:ss",
-              rules: [{
-                required: true,
-                message: "请输入开始时间",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "结束时间",
-              prop: "endTime",
-              type:'datetime',
-              search:true,
-              valueFormat: "yyyy-MM-dd HH:mm:ss",
-              rules: [{
-                required: true,
-                message: "请输入结束时间",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "创建时间",
-              prop: "createTime",
-              rules: [{
-                required: true,
-                message: "请输入创建时间",
+                message: "请输入文件路径",
                 trigger: "blur"
               }]
             },
@@ -172,10 +119,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.record_add, false),
-          viewBtn: this.vaildData(this.permission.record_view, false),
-          delBtn: this.vaildData(this.permission.record_delete, false),
-          editBtn: this.vaildData(this.permission.record_edit, false)
+          addBtn: this.vaildData(false, false),
+          viewBtn: this.vaildData(false, false),
+          delBtn: this.vaildData(this.permission.video_delete, false),
+          editBtn: this.vaildData(false, false)
         };
       },
       ids() {
@@ -290,23 +237,6 @@
           this.loading = false;
           this.selectionClear();
         });
-      },
-      go(row,type){
-        switch(type) {
-          case 1:
-              this.$router.push({ path: '/class/sign/recordsignin', query: { id: row.id }})
-              break;
-          case 2:
-              this.$router.push({ path: '/class/student/stusend', query: { id: row.id }})
-              break;
-          case 3:
-              this.$router.push({ path: '/class/screen/video', query: { id: row.id }})
-              break;
-          case 4:
-              this.$router.push({ path: '/class/send/send', query: { id: row.id }})
-              break;
-        } 
-        
       }
     }
   };

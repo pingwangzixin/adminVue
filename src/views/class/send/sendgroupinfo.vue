@@ -22,30 +22,16 @@
                    size="small"
                    icon="el-icon-delete"
                    plain
-                   v-if="permission.record_delete"
+                   v-if="permission.sendgroupinfo_delete"
                    @click="handleDelete">删 除
         </el-button>
       </template>
-      <template slot-scope="scope" slot="menu">
-        <el-dropdown @command="go">
-          <el-button  class="el-dropdown-link" size="small">
-            详情<i class="el-icon-arrow-down el-icon--right"></i>
-          </el-button >
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item @click.native="go(scope.row,1)">签到</el-dropdown-item>
-            <el-dropdown-item @click.native="go(scope.row,2)">学生上传</el-dropdown-item>
-            <el-dropdown-item @click.native="go(scope.row,3)">课堂录屏</el-dropdown-item>
-            <el-dropdown-item @click.native="go(scope.row,4)">教师下发</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </template>
-
     </avue-crud>
   </basic-container>
 </template>
 
 <script>
-  import {getList, getDetail, add, update, remove} from "@/api/class/record/record";
+  import {getList, getDetail, add, update, remove} from "@/api/class/send/sendgroupinfo";
   import {mapGetters} from "vuex";
 
   export default {
@@ -63,94 +49,34 @@
         option: {
           tip: false,
           border: true,
-          index: false,
+          index: true,
           viewBtn: true,
-          menuType:'menu',
-          editBtn: false,
           selection: true,
-          addBtn: false,
           column: [
             {
-              label: "编号",
+              label: " ",
               prop: "id",
               rules: [{
                 required: true,
-                message: "请输入编号",
+                message: "请输入 ",
                 trigger: "blur"
               }]
             },
             {
-              label: "教师名称",
-              prop: "teacherName",
-              search:true,
+              label: "下发记录id",
+              prop: "sId",
               rules: [{
                 required: true,
-                message: "请输入教师名称",
+                message: "请输入下发记录id",
                 trigger: "blur"
               }]
             },
             {
-              label: "班级名称",
-              prop: "className",
-              search:true,
+              label: "分组信息",
+              prop: "groupInfo",
               rules: [{
                 required: true,
-                message: "请输入班级名称",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "科目名称",
-              prop: "subjectName",
-              search:true,
-              rules: [{
-                required: true,
-                message: "请输入科目名称",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "年级名称",
-              prop: "gradeName",
-              search:true,
-              rules: [{
-                required: true,
-                message: "请输入年级名称",
-                trigger: "blur"
-              }]
-            },
-           
-            {
-              label: "学校名称",
-              prop: "officeName",
-              search:true,
-              rules: [{
-                required: true,
-                message: "请输入学校名称",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "开始时间",
-              prop: "startTime",
-              search:true,
-              type:'datetime',
-              valueFormat: "yyyy-MM-dd HH:mm:ss",
-              rules: [{
-                required: true,
-                message: "请输入开始时间",
-                trigger: "blur"
-              }]
-            },
-            {
-              label: "结束时间",
-              prop: "endTime",
-              type:'datetime',
-              search:true,
-              valueFormat: "yyyy-MM-dd HH:mm:ss",
-              rules: [{
-                required: true,
-                message: "请输入结束时间",
+                message: "请输入分组信息",
                 trigger: "blur"
               }]
             },
@@ -172,10 +98,10 @@
       ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.record_add, false),
-          viewBtn: this.vaildData(this.permission.record_view, false),
-          delBtn: this.vaildData(this.permission.record_delete, false),
-          editBtn: this.vaildData(this.permission.record_edit, false)
+          addBtn: this.vaildData(this.permission.sendgroupinfo_add, false),
+          viewBtn: this.vaildData(this.permission.sendgroupinfo_view, false),
+          delBtn: this.vaildData(this.permission.sendgroupinfo_delete, false),
+          editBtn: this.vaildData(this.permission.sendgroupinfo_edit, false)
         };
       },
       ids() {
@@ -290,23 +216,6 @@
           this.loading = false;
           this.selectionClear();
         });
-      },
-      go(row,type){
-        switch(type) {
-          case 1:
-              this.$router.push({ path: '/class/sign/recordsignin', query: { id: row.id }})
-              break;
-          case 2:
-              this.$router.push({ path: '/class/student/stusend', query: { id: row.id }})
-              break;
-          case 3:
-              this.$router.push({ path: '/class/screen/video', query: { id: row.id }})
-              break;
-          case 4:
-              this.$router.push({ path: '/class/send/send', query: { id: row.id }})
-              break;
-        } 
-        
       }
     }
   };
