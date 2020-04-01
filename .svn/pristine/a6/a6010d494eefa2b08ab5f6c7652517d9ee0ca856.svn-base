@@ -118,7 +118,7 @@
             },
             {
                 "type": "upload",
-                "label": "下载地址",
+                "label": "下载地址6666",
                 "prop": "downloadUrl",
                 "span": 24,
                 "slot":true,

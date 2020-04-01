@@ -37,9 +37,6 @@
                    @click.stop="handleCopy(scope.row)">复制
         </el-button>
       </template>
-      <template slot="downloadUrl" slot-scope="scope" >
-        {{scope.row.downloadUrl}}
-      </template>
     </avue-crud>
   </basic-container>
 </template>
@@ -61,8 +58,8 @@
           total: 0
         },
         option: {
-          dialogWidth: 1024,
-          dialogHeight: 430,
+          dialogWidth: 400,
+          dialogHeight: 500,
           tip: false,
           border: true,
           index: true,
@@ -92,14 +89,6 @@
             {
               label: "应用类型",
               prop: "appType",
-              type: "select",
-              row: true,
-              dataType: "int",
-              dicUrl: "/api/crazy-system/dict/dictionary?code=app_type",
-              props: {
-                label: "dictValue",
-                value: "dictKey"
-              },
               rules: [{
                 required: true,
                 message: "请输入应用类型",
@@ -107,56 +96,14 @@
               }]
             },
             {
-              label: "更新描述",
-              prop: "modifyContent",
-              type: "textarea",
+              label: "下载地址",
+              prop: "downloadUrl",
               rules: [{
                 required: true,
-                message: "请输入更新描述",
+                message: "请输入下载地址",
                 trigger: "blur"
               }]
             },
-            {
-                "type": "upload",
-                "label": "下载地址",
-                "prop": "downloadUrl",
-                "span": 24,
-                "slot":true,
-                "display": true,
-                "showFileList": true,
-                "dataType": "string",
-                "multiple": true,
-                "limit": 100,
-                "props": {},
-                "propsHttp": {
-                  res: 'data'
-                },
-                "canvasOption": {},
-                "headers": [],
-                "data": [],
-                "action": "/api/common/upload"
-            }
-            //  {
-            //     label: "下载地址",
-            //     prop: "downloadUrl",
-            //     addDisplay:true,
-
-            //     type:"upload",
-            //     span: 24,
-            //     action: '/api/common/upload',
-            //     listType: 'file',
-            //     propsHttp: {
-            //       res: 'data'
-            //     },
-            //     tip: '请上传宽高为： 500*332 的图片',
-
-            //     row: true,
-            //     rules: [{
-            //       required: true,
-            //       message: "请输入下载地址",
-            //       trigger: "blur"
-            //     }]
-            //  }
             // {
             //   label: "更新类型",
             //   prop: "updateType",
@@ -203,15 +150,15 @@
             //   }]
             // },
 
-            //{
-            //  label: "创建时间",
-            //  prop: "createTime",
-            //  rules: [{
-            //    required: true,
-            //    message: "请输入创建时间",
-            //    trigger: "blur"
-            //  }]
-            //}
+            {
+              label: "创建时间",
+              prop: "createTime",
+              rules: [{
+                required: true,
+                message: "请输入创建时间",
+                trigger: "blur"
+              }]
+            }
             // ,
             // {
             //   label: "创建人",
